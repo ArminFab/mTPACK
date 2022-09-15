@@ -14,21 +14,27 @@ data_coding_TPACK <- rio::import("data\\TPACK_Kodierung_ab1307.xlsx")    # raw-d
 data_merged <- merge(data_sosci, data_coding_TPACK, by = "CASE")
 
 
-################## data cleaning #############################
+################## inital data cleaning #############################
 
 
 # remove last row (as it depicts headers)
 data_merged <- slice(data_merged, 1: (n()) - 1)
 
 
-# Gender: String -> numeric (1=weiblich, 2=männlich, 3=divers)
+# Gender: String -> numeric (1=female, 2=male, 3=diverse)
 data_merged$GEN <- as.numeric(data_merged$GEN)
 
-# Removing SERIAL, REF as they have only missings
+# Removing SERIAL, REF as they have  missings only
 data_merged <- data_merged[ , !names(data_merged) %in% c("SERIAL", "REF")]
 
 # Removing participants that did not finish the sosci survey
 data <- filter(data_merged, data_merged$FINISHED == "1")
+
+
+
+####### Preparing variables for analysis #################
+
+################# TPACK ##################################
 
 # Creating sum scores for TPACK_5, ... , TPACK_8
 data <- mutate(data, TPACK_5_SUMME = TPACK_5_UQ + TPACK_5_POT + TPACK_5_EXPL,
@@ -51,4 +57,46 @@ print(vis_miss(data_TPACK))
 
 # correlations between TPACK items using FIML (library psych)
 print (corFiml(data_TPACK, covar = FALSE,show=FALSE))
+
+###################### PCK ###############################################
+
+# Recoding each PCK_item to binary variables (1, if the correct answer was given, 0 otherwise)
+# PCK_1a: Answer is correct if PCK_1a == 1
+# PCK_1b: Answer is correct if PCK_1b == 2
+# PCK_1c: Answer is correct if PCK_1c == 2
+# PCK_2a: Answer is correct if == 2
+# PCK_2b: Answer is correct if == 1
+# PCK_2c: Answer is correct if == 3
+# PCK_3: Answer is correct if == 2
+# PCK_5a: Answer is correct if == 1
+# PCK_5b: Answer is correct if == 2
+# PCK_5c: Answer is correct if == 3
+# PCK_6a: Answer is correct if == 1
+# PCK_6b: Answer is correct if == 1
+# PCK_7a: Answer is correct if == 2
+# PCK_7a: Answer is correct if == 1
+# PCK_8a: Answer is correct if == 2
+# PCK_8b: Answer is correct if == 1
+# PCK_9:  Answer is correct if == 1
+# PCK_10a:  Answer is correct if == 1
+# PCK_10b:  Answer is correct if == 2
+# PCK_10c:  Answer is correct if == 2
+# PCK_11a:  Answer is correct if == 2
+# PCK_11b:  Answer is correct if == 3
+# PCK_11c:  Answer is correct if == 4
+# PCK_11d:  Answer is correct if == 1
+# PCK_12: Answer is correct if == 3
+# PCK_13: Answer is correct if == 2
+
+
+
+
+
+
+
+
+
+
+
+
 
