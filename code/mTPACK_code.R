@@ -60,7 +60,7 @@ print (corFiml(data_TPACK, covar = FALSE,show=FALSE))
 
 ###################### PCK ###############################################
 
-# Recoding each PCK_item to binary variables (1, if the correct answer was given, 0 otherwise)
+# Information on correctedness regarding the PCK items
 # PCK_1a: Answer is correct if PCK_1a == 1
 # PCK_1b: Answer is correct if PCK_1b == 2
 # PCK_1c: Answer is correct if PCK_1c == 2
@@ -88,8 +88,18 @@ print (corFiml(data_TPACK, covar = FALSE,show=FALSE))
 # PCK_12: Answer is correct if == 3
 # PCK_13: Answer is correct if == 2
 
+# Recoding each PCK_item to binary variables (1, if the correct answer was given, 0 otherwise)
 
-
+data$PCK_1a <- ifelse(data$PCK_1a == "1",1,0) # If PCK_1a was answered correctly, assign value 1; otherwise 0
+data$PCK_1b <- ifelse(data$PCK_1b == "2",1,0) 
+data$PCK_1c <- ifelse(data$PCK_1c == "2",1,0) 
+data$PCK_2a <- ifelse(data$PCK_2a == "2",1,0)
+data$PCK_2b <- ifelse(data$PCK_2b == "1",1,0) 
+data$PCK_2c <- ifelse(data$PCK_2c == "3",1,0)
+data$PCK_3  <- ifelse(data$PCK_3  == "2",1,0)
+data$PCK_5a <- ifelse(data$PCK_5a == "1",1,0)
+data$PCK_5b <- ifelse(data$PCK_5b == "2",1,0) 
+data$PCK_5c <- ifelse(data$PCK_5c == "3",1,0)
 
 
 
