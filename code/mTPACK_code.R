@@ -100,9 +100,51 @@ data$PCK_3  <- ifelse(data$PCK_3  == "2",1,0)
 data$PCK_5a <- ifelse(data$PCK_5a == "1",1,0)
 data$PCK_5b <- ifelse(data$PCK_5b == "2",1,0) 
 data$PCK_5c <- ifelse(data$PCK_5c == "3",1,0)
+data$PCK_6a <- ifelse(data$PCK_6a == "1",1,0)
+data$PCK_6b <- ifelse(data$PCK_6b == "1",1,0)
+data$PCK_7a <- ifelse(data$PCK_7a == "2",1,0)
+data$PCK_7b <- ifelse(data$PCK_7b == "1",1,0)
+data$PCK_8a <- ifelse(data$PCK_8a == "2",1,0)
+data$PCK_8b <- ifelse(data$PCK_8b == "1",1,0)
+data$PCK_9  <- ifelse(data$PCK_9 == "1",1,0)
+data$PCK_10a  <- ifelse(data$PCK_10a == "1",1,0)
+data$PCK_10b <- ifelse(data$PCK_10b == "2",1,0)
+data$PCK_10c  <- ifelse(data$PCK_10c == "2",1,0)
+data$PCK_11a  <- ifelse(data$PCK_11a == "2",1,0)
+data$PCK_11b  <- ifelse(data$PCK_11b == "3",1,0)
+data$PCK_11c  <- ifelse(data$PCK_11c == "4",1,0)
+data$PCK_11d  <- ifelse(data$PCK_11d == "1",1,0)
+data$PCK_12   <- ifelse(data$PCK_12 == "3",1,0)
+data$PCK_13  <- ifelse(data$PCK_13 == "2",1,0)
 
+# df containing each 26 PCK items
 
-
+data_PCK <- select(data, PCK_1a, 
+                         PCK_1b, 
+                         PCK_1c, 
+                         PCK_2a, 
+                         PCK_2b, 
+                         PCK_2c, 
+                         PCK_3 , 
+                         PCK_5a, 
+                         PCK_5b, 
+                         PCK_5c, 
+                         PCK_6a, 
+                         PCK_6b, 
+                         PCK_7a, 
+                         PCK_7b, 
+                         PCK_8a, 
+                         PCK_8b, 
+                         PCK_9,
+                         PCK_10a,
+                         PCK_10b,
+                         PCK_10c,
+                         PCK_11a,
+                         PCK_11b,
+                         PCK_11c,
+                         PCK_11d,
+                         PCK_12 ,
+                         PCK_13)
 
 
 
