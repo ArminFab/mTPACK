@@ -4,7 +4,7 @@ library(tidyverse)
 library(rio)
 library(dplyr)
 library(naniar)  # missing pattern visualization
-
+library(psych)
 
 # data import
 data_sosci <- rio::import("data\\data_TPACK_Studie_2022-07-29_10-12.xlsx")  # raw-data from Sosci
@@ -48,4 +48,7 @@ data_TPACK <- select(data, TPACK_1_SUMME,
 
 # Missing pattern visual
 print(vis_miss(data_TPACK))
+
+# correlations between TPACK items using FIML (library psych)
+print (corFiml(data_TPACK, covar = FALSE,show=FALSE))
 
