@@ -5,6 +5,10 @@ library(rio)
 library(dplyr)
 library(naniar)  # missing pattern visualization
 library(psych)
+library(lavaan) # sem
+library(lavaanPlot) 
+library(semPlot) # nice graphical representations of SEM
+
 
 # data import
 data_sosci <- rio::import("data\\data_TPACK_Studie_2022-07-29_10-12.xlsx")  # raw-data from Sosci
@@ -86,7 +90,7 @@ print (corFiml(data_TPACK, covar = FALSE,show=FALSE))
 # PCK_11c:  Answer is correct if == 4
 # PCK_11d:  Answer is correct if == 1
 # PCK_12: Answer is correct if == 3
-# PCK_13: Answer is correct if == 2
+# PCK_13: Answer is correct if == 14
 
 # Recoding each PCK_item to binary variables (1, if the correct answer was given, 0 otherwise)
 
@@ -115,7 +119,7 @@ data$PCK_11b  <- ifelse(data$PCK_11b == "3",1,0)
 data$PCK_11c  <- ifelse(data$PCK_11c == "4",1,0)
 data$PCK_11d  <- ifelse(data$PCK_11d == "1",1,0)
 data$PCK_12   <- ifelse(data$PCK_12 == "3",1,0)
-data$PCK_13  <- ifelse(data$PCK_13 == "2",1,0)
+data$PCK_13  <- ifelse(data$PCK_13 == "14",1,0)
 
 # df containing each 26 PCK items
 
@@ -125,7 +129,7 @@ data_PCK <- select(data, PCK_1a,
                          PCK_2a, 
                          PCK_2b, 
                          PCK_2c, 
-                         PCK_3 , 
+                         PCK_3, 
                          PCK_5a, 
                          PCK_5b, 
                          PCK_5c, 
@@ -145,6 +149,36 @@ data_PCK <- select(data, PCK_1a,
                          PCK_11d,
                          PCK_12 ,
                          PCK_13)
+
+######## CFA for TPACK & PCK ########
+
+# dataframe including PCK and TPACK variables
+data_TPACK <- mutate(data_TPACK, CASE= data$CASE)
+data_PCK <- mutate(data_PCK, CASE=data$CASE)
+data_TPACK_PCK <-left_join(data_TPACK, data_PCK, by = "CASE")
+
+data_list <- list(data_PCK, data_TPACK)
+# Measurement model
+mod1 <- 'TPACK=~TPACK_1_SUMME+TPACK_2_SUMME+TPACK_3_SUMME+TPACK_4_SUMME+TPACK_5_SUMME+TPACK_6_SUMME+TPACK_7_SUMME+TPACK_8_SUMME
+          PCK =~PCK_1a+PCK_1b+PCK_1c+PCK_2a+PCK_2b+PCK_2c+PCK_3+PCK_5a+PCK_5b+PCK_5c+PCK_6a+PCK_6b+PCK_7a+PCK_7b+PCK_8a+PCK_8b+PCK_9+PCK_10a+PCK_10b+PCK_10c+PCK_11a+PCK_11b+PCK_11c+PCK_11d+PCK_12+PCK_13'
+
+
+# fitting mod1
+fit_mod1 <-cfa(mod1, data = data,                         # Model-Name siehe oben, Datensatz wie oben
+                     estimator="MLR",
+                     missing = "ML")                      # Spezifizierung des Sch?tzers und des Umgangs mit Missing Values     
+
+# results
+summary(fit_mod1, fit.measures=T, standardized=T, rsquare = TRUE)
+lavaanPlot(model = fit_mod1, 
+           node_options = list(shape = "box", fontname = "Helvetica"), 
+           edge_options = list(color = "grey"), 
+           coefs = T,covs = T, stars = T, stand = T)
+
+
+
+
+
 
 
 
