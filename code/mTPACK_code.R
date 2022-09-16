@@ -20,10 +20,8 @@ data_merged <- merge(data_sosci, data_coding_TPACK, by = "CASE")
 
 ################## inital data cleaning #############################
 
-
 # remove last row (as it depicts headers)
 data_merged <- slice(data_merged, 1: (n()) - 1)
-
 
 # Gender: String -> numeric (1=female, 2=male, 3=diverse)
 data_merged$GEN <- as.numeric(data_merged$GEN)
@@ -33,8 +31,6 @@ data_merged <- data_merged[ , !names(data_merged) %in% c("SERIAL", "REF")]
 
 # Removing participants that did not finish the sosci survey OR gave consent
 data <- filter(data_merged, data_merged$FINISHED == "1" & data_merged$IN03 == "1")
-
-
 
 
 ####### Preparing variables for analysis #################
@@ -56,6 +52,14 @@ data_TPACK <- select(data, TPACK_1_SUMME,
                            TPACK_6_SUMME,
                            TPACK_7_SUMME,
                            TPACK_8_SUMME)
+
+# self-reported TPACK ("SE_1", etc.) from chr to numeric
+data$SE_1 <- as.numeric(data$SE_1)
+data$SE_2 <- as.numeric(data$SE_2)
+data$SE_3 <- as.numeric(data$SE_3)
+data$SE_4 <- as.numeric(data$SE_4)
+data$SE_5 <- as.numeric(data$SE_5)
+
 
 # Missing pattern visual
 #print(vis_miss(data_TPACK))
@@ -228,6 +232,24 @@ lavaanPlot(model = fit_mod1,
            edge_options = list(color = "grey"), 
            coefs = T,covs = T, stars = T, stand = T)
 
+# SEM, TK & PCK predicting TPACK
 
+mod2 <- 'TPACK =~ TPACK_1_SUMME+TPACK_2_SUMME+TPACK_3_SUMME+TPACK_4_SUMME+TPACK_5_SUMME+TPACK_6_SUMME+TPACK_7_SUMME+TPACK_8_SUMME
+          PCK  =~ PCK_1a+PCK_1b+PCK_1c+PCK_2a+PCK_2b+PCK_2c+PCK_3+PCK_5a+PCK_5b+PCK_5c+PCK_6a+PCK_6b+PCK_7a+PCK_7b+PCK_8a+PCK_8b+PCK_9+PCK_10a+PCK_10b+PCK_10c+PCK_11a+PCK_11b+PCK_11c+PCK_11d+PCK_12+PCK_13
+          TK   =~ TK_spread_1  + TK_spread_2+TK_spread_3+TK_spread_4+TK_whiteboard_1+TK_whiteboard_2+TK_whiteboard_3+TK_collab_1+TK_collab_2+TK_present_1+TK_present_2+TK_present_3+TK_webbrowser #measurment model
+          TPACK ~ PCK + TK
+          '
+fit_mod2 <-sem(mod2, data = data,                         # Model-Name siehe oben, Datensatz wie oben
+               estimator="MLR",
+               missing = "ML") 
 
+summary(fit_mod2, fit.measures=T, standardized=T, rsquare = TRUE)
 
+##### Self-efficacy & TPACK #####
+mod3 <- 'TPACK =~ TPACK_1_SUMME+TPACK_2_SUMME+TPACK_3_SUMME+TPACK_4_SUMME+TPACK_5_SUMME+TPACK_6_SUMME+TPACK_7_SUMME+TPACK_8_SUMME
+          SE   =~ SE_1 + SE_2 + SE_3 + SE_4 + SE_5
+          TPACK ~ SE
+          '
+fit_mod3 <-sem(mod3, data = data,                         # Model-Name siehe oben, Datensatz wie oben
+               estimator="MLR",
+               missing = "ML") 
