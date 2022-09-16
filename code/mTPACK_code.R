@@ -253,3 +253,12 @@ mod3 <- 'TPACK =~ TPACK_1_SUMME+TPACK_2_SUMME+TPACK_3_SUMME+TPACK_4_SUMME+TPACK_
 fit_mod3 <-sem(mod3, data = data,                         # Model-Name siehe oben, Datensatz wie oben
                estimator="MLR",
                missing = "ML") 
+
+#### TPACK & PCK ########
+mod4 <- 'TPACK =~ TPACK_1_SUMME+TPACK_2_SUMME+TPACK_3_SUMME+TPACK_4_SUMME+TPACK_5_SUMME+TPACK_6_SUMME+TPACK_7_SUMME+TPACK_8_SUMME
+            PCK  =~ PCK_1a+PCK_1b+PCK_1c+PCK_2a+PCK_2b+PCK_2c+PCK_3+PCK_5a+PCK_5b+PCK_5c+PCK_6a+PCK_6b+PCK_7a+PCK_7b+PCK_8a+PCK_8b+PCK_9+PCK_10a+PCK_10b+PCK_10c+PCK_11a+PCK_11b+PCK_11c+PCK_11d+PCK_12+PCK_13
+            TPACK ~ PCK'
+
+fit_mod4 <-sem(mod4, data = data,                         # Model-Name siehe oben, Datensatz wie oben
+               estimator="MLR",
+               missing = "ML") 
