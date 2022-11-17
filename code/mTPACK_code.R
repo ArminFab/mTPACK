@@ -43,6 +43,7 @@ data <- mutate(data, TPACK_5_SUMME = TPACK_5_UQ + TPACK_5_POT + TPACK_5_EXPL,
                      TPACK_7_SUMME = TPACK_7_UQ + TPACK_7_POT + TPACK_7_EXPL,
                      TPACK_8_SUMME = TPACK_8_UQ + TPACK_8_POT + TPACK_8_EXPL)
 
+
 # creating a df that contains TPACK-scores only
 data_TPACK <- select(data, TPACK_1_SUMME,
                            TPACK_2_SUMME,
@@ -53,7 +54,23 @@ data_TPACK <- select(data, TPACK_1_SUMME,
                            TPACK_7_SUMME,
                            TPACK_8_SUMME)
 
+# Missing Values (NA) are specified as 0s 
+
+data_TPACK[is.na(data_TPACK)] <- 0
+
+# sumscores of TPACK
+data_TPACK <- mutate(data_TPACK, TPACK_sum_scores = TPACK_1_SUMME+
+                     TPACK_2_SUMME+
+                     TPACK_3_SUMME+
+                     TPACK_4_SUMME+
+                     TPACK_5_SUMME+
+                     TPACK_6_SUMME+
+                     TPACK_7_SUMME+
+                     TPACK_8_SUMME)
+
 # self-reported TPACK ("SE_1", etc.) from chr to numeric
+
+
 data$SE_1 <- as.numeric(data$SE_1)
 data$SE_2 <- as.numeric(data$SE_2)
 data$SE_3 <- as.numeric(data$SE_3)
@@ -62,10 +79,10 @@ data$SE_5 <- as.numeric(data$SE_5)
 
 
 # Missing pattern visual
-#print(vis_miss(data_TPACK))
+print(vis_miss(data_TPACK))
 
 # correlations between TPACK items using FIML (library psych)
-#print (corFiml(data_TPACK, covar = FALSE,show=FALSE))
+print (corFiml(data_TPACK, covar = FALSE,show=FALSE))
 
 ###################### PCK ###############################################
 
@@ -148,19 +165,19 @@ data$PCK_12   <- ifelse(data$PCK_12 == "3",1,0)
 data$PCK_13  <- ifelse(data$PCK_13 == "14",1,0)
 
 # Recoding each TK_Item to binary variables
-data$TK_spread_1 <- ifelse(data$TK_spread_1 == "1",1,0)
-data$TK_spread_2 <- ifelse(data$TK_spread_2 == "1",1,0)
-data$TK_spread_3 <- ifelse(data$TK_spread_3 == "4",1,0)
-data$TK_spread_4 <- ifelse(data$TK_spread_4 == "1",1,0)
+data$TK_spread_1     <- ifelse(data$TK_spread_1 == "1",1,0)
+data$TK_spread_2     <- ifelse(data$TK_spread_2 == "1",1,0)
+data$TK_spread_3     <- ifelse(data$TK_spread_3 == "4",1,0)
+data$TK_spread_4     <- ifelse(data$TK_spread_4 == "1",1,0)
 data$TK_whiteboard_1 <- ifelse(data$TK_whiteboard_1 == "2",1,0)
 data$TK_whiteboard_2 <- ifelse(data$TK_whiteboard_2 == "1",1,0)
 data$TK_whiteboard_3 <- ifelse(data$TK_whiteboard_3 == "3",1,0)
-data$TK_collab_1 <- ifelse(data$TK_collab_1 == "2",1,0)
-data$TK_collab_2 <- ifelse(data$TK_collab_2 == "1",1,0)
-data$TK_present_1 <- ifelse(data$TK_present_1 == "3",1,0)
-data$TK_present_2 <- ifelse(data$TK_present_2 == "2",1,0)
-data$TK_present_3 <- ifelse(data$TK_present_3 == "4",1,0)
-data$TK_webbrowser <- ifelse(data$TK_webbrowser == "2",1,0)
+data$TK_collab_1     <- ifelse(data$TK_collab_1 == "2",1,0)
+data$TK_collab_2     <- ifelse(data$TK_collab_2 == "1",1,0)
+data$TK_present_1    <- ifelse(data$TK_present_1 == "3",1,0)
+data$TK_present_2    <- ifelse(data$TK_present_2 == "2",1,0)
+data$TK_present_3    <- ifelse(data$TK_present_3 == "4",1,0)
+data$TK_webbrowser   <- ifelse(data$TK_webbrowser == "2",1,0)
 
 # df data_TK consisting of each TK_ item
 data_TK <- select(data, TK_spread_1,    
@@ -211,8 +228,14 @@ data_PCK <- select(data, PCK_1a,
 data_TPACK <- mutate(data_TPACK, CASE= data$CASE)
 data_PCK <- mutate(data_PCK, CASE=data$CASE)
 data_TK <- mutate(data_TK, CASE=data$CASE)
-data_knwoledge <-left_join(data_TPACK, data_PCK, by = "CASE")
-data_list <- list(data_PCK, data_TPACK)
+data1 <- merge(data_TPACK, data_PCK, by = "CASE")
+data_knowledge <-merge(data1, data_TK, by = "CASE")
+
+###################### Deskriptiver Überblick über die Datan #################
+summary(data_knowledge)
+
+
+
 
 # Measurement model
 mod1 <- 'TPACK =~ TPACK_1_SUMME+TPACK_2_SUMME+TPACK_3_SUMME+TPACK_4_SUMME+TPACK_5_SUMME+TPACK_6_SUMME+TPACK_7_SUMME+TPACK_8_SUMME
@@ -232,8 +255,9 @@ lavaanPlot(model = fit_mod1,
            edge_options = list(color = "grey"), 
            coefs = T,covs = T, stars = T, stand = T)
 
-# SEM, TK & PCK predicting TPACK
+############## SEM ####################
 
+# model 2: TPACK ~ PCK + TK
 mod2 <- 'TPACK =~ TPACK_1_SUMME+TPACK_2_SUMME+TPACK_3_SUMME+TPACK_4_SUMME+TPACK_5_SUMME+TPACK_6_SUMME+TPACK_7_SUMME+TPACK_8_SUMME
           PCK  =~ PCK_1a+PCK_1b+PCK_1c+PCK_2a+PCK_2b+PCK_2c+PCK_3+PCK_5a+PCK_5b+PCK_5c+PCK_6a+PCK_6b+PCK_7a+PCK_7b+PCK_8a+PCK_8b+PCK_9+PCK_10a+PCK_10b+PCK_10c+PCK_11a+PCK_11b+PCK_11c+PCK_11d+PCK_12+PCK_13
           TK   =~ TK_spread_1  + TK_spread_2+TK_spread_3+TK_spread_4+TK_whiteboard_1+TK_whiteboard_2+TK_whiteboard_3+TK_collab_1+TK_collab_2+TK_present_1+TK_present_2+TK_present_3+TK_webbrowser #measurment model
@@ -245,7 +269,7 @@ fit_mod2 <-sem(mod2, data = data,                         # Model-Name siehe obe
 
 summary(fit_mod2, fit.measures=T, standardized=T, rsquare = TRUE)
 
-##### Self-efficacy & TPACK #####
+# model 3: TPACK ~ SE
 mod3 <- 'TPACK =~ TPACK_1_SUMME+TPACK_2_SUMME+TPACK_3_SUMME+TPACK_4_SUMME+TPACK_5_SUMME+TPACK_6_SUMME+TPACK_7_SUMME+TPACK_8_SUMME
           SE   =~ SE_1 + SE_2 + SE_3 + SE_4 + SE_5
           TPACK ~ SE
@@ -254,11 +278,11 @@ fit_mod3 <-sem(mod3, data = data,                         # Model-Name siehe obe
                estimator="MLR",
                missing = "ML") 
 
-#### TPACK & PCK ########
+#### model 4: TPACK ~ PCK ########
 mod4 <- 'TPACK =~ TPACK_1_SUMME+TPACK_2_SUMME+TPACK_3_SUMME+TPACK_4_SUMME+TPACK_5_SUMME+TPACK_6_SUMME+TPACK_7_SUMME+TPACK_8_SUMME
             PCK  =~ PCK_1a+PCK_1b+PCK_1c+PCK_2a+PCK_2b+PCK_2c+PCK_3+PCK_5a+PCK_5b+PCK_5c+PCK_6a+PCK_6b+PCK_7a+PCK_7b+PCK_8a+PCK_8b+PCK_9+PCK_10a+PCK_10b+PCK_10c+PCK_11a+PCK_11b+PCK_11c+PCK_11d+PCK_12+PCK_13
-            TPACK ~ PCK'
+            '
 
-fit_mod4 <-sem(mod4, data = data,                         # Model-Name siehe oben, Datensatz wie oben
+fit_mod4 <-cfa(mod4, data = data,                         # Model-Name siehe oben, Datensatz wie oben
                estimator="MLR",
                missing = "ML") 
